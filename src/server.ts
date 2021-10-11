@@ -17,6 +17,9 @@ createConnection(
     // api/user endpoint
     app.use('/api/users', require('./routes/users'));
 
+    // api/quote endpoint
+    app.use('/api/quotes', require('./routes/quotes'));
+
     const port = 4000;
     app.listen(port, () => {
         console.log(`listening to port ${port}`)
