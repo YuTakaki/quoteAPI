@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, Check, OneToMany } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Check, OneToMany, CreateDateColumn } from "typeorm";
 import Quotes from "./quotesModel";
 
 @Entity({name : 'users'})
@@ -21,6 +21,9 @@ class Users {
 
     @Column()
     password: string;
+
+    @CreateDateColumn()
+    data: Date;
     
     @OneToMany(() => Quotes, quotes => quotes.user_id)
     quotes: Quotes[];

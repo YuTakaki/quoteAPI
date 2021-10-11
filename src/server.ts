@@ -12,9 +12,10 @@ createConnection(
     app.use(express.json());
     app.use(express.urlencoded({extended: true}));
 
-    app.get('/', (_, res) => {
-        res.send('hi')
-    })
+    // app.get('/api/random', )
+
+    // api/user endpoint
+    app.use('/api/users', require('./routes/users'));
 
     const port = 4000;
     app.listen(port, () => {
