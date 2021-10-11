@@ -4,9 +4,9 @@ export = {
     password: process.env.DB_PASSWORD,
     host: process.env.DB_HOST,
     port: 5432,
-    name: process.env.DB_NAME,
-    entities: ["src/entities/**/*.ts"],
-    migrations: ["src/migrations/**/*.ts"],
+    database: process.env.DB_NAME,
+    entities: ["src/entities/*.ts"],
+    migrations: ["src/migrations/*.ts"],
     migrationsRun: false /* Disable auto-run migration */,
     cli: {
         entitiesDir: "src/entities",

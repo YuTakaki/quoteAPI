@@ -12,6 +12,10 @@ createConnection(
     app.use(express.json());
     app.use(express.urlencoded({extended: true}));
 
+    app.get('/', (_, res) => {
+        res.send('hi')
+    })
+
     const port = 4000;
     app.listen(port, () => {
         console.log(`listening to port ${port}`)
