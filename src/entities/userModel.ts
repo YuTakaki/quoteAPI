@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, Check } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Check, OneToMany } from "typeorm";
+import Quotes from "./quotesModel";
 
 @Entity({name : 'users'})
 @Check('LENGTH("username") > 7')
@@ -21,6 +22,8 @@ class Users {
     @Column()
     password: string;
     
+    @OneToMany(() => Quotes, quotes => quotes.user_id)
+    quotes: Quotes[];
 }
 
 export default Users;
