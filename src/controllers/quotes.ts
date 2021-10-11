@@ -13,10 +13,10 @@ class QuoteController {
             let random = Math.round(Math.random() * (num.max - num.min) + num.min);
             let quote;
             const author = `
-                (SELECT first_name || ' ' || last_name 
-                FROM users 
-                WHERE users.id = quotes.user_id) as author
-                `
+            (SELECT first_name || ' ' || last_name 
+            FROM users 
+            WHERE users.id = quotes.user_id) as author
+            `
             while(!quote){
                 const req = await getConnection()
                 .createQueryBuilder()
@@ -34,17 +34,32 @@ class QuoteController {
         } catch (error) {
             console.log(error);
         }
-
-        
+    }
+    async getAllQuote(req: Request, res: Response): Promise<void> {
+        try {
+            const author = `
+            (SELECT first_name || ' ' || last_name 
+            FROM users 
+            WHERE users.id = quotes.user_id) as author
+            `
+            const allQuotes = await getConnection()
+                .createQueryBuilder()
+                .select(["quote", "date", "id", author])
+                .from(Quotes, 'quotes')
+                .getRawMany();
+            res.send(allQuotes)
+        } catch (error) {
+            console.log(error); 
+        }
 
     }
     async getQuote(req: Request, res: Response): Promise<void> {
         try {
-            const author = `
-                (SELECT first_name || ' ' || last_name 
-                FROM users 
-                WHERE users.id = quotes.user_id) as author
-                `
+            const author =`
+            (SELECT first_name || ' ' || last_name 
+            FROM users 
+            WHERE users.id = quotes.user_id) as author
+            `
             const quotes = await getConnection()
                 .createQueryBuilder()
                 .select(["quote", "date", "id", author])
@@ -55,10 +70,10 @@ class QuoteController {
                 res.send(quotes)
                 return
             }
-            res.send('Quote does not exist');
+            res.status(404).send('Quote does not exist');
             
         } catch (error) {
-            console.log(error);
+            res.status(404).send('Cannot found quote')
             
         }
 
@@ -67,32 +82,26 @@ class QuoteController {
     async getQuoteByUser(req: Request, res: Response): Promise<void> {
         try {
             const { idOrUsername } = req.params
-            const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-            let key = "username";
-            let id: string;
-            if(regexExp.test(idOrUsername)){
-                key = "id"
-                id = idOrUsername
-            }
+            const where = res.locals.where;
 
             const user = await getRepository(Users).findOne({
-                select: ["id", "username"],
-                where : {[key] : idOrUsername}
+                select: ["id", "first_name", "last_name"],
+                where
             });
             if(user){
-                id = user.id
                 const quotes = await getRepository(Quotes).find({
                     select: ["quote", "date", "id"],
                     where : {user_id : idOrUsername}
                 });
 
                 res.send({
-                    username : user.username,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
                     quotes
                 });
                 return 
             }
-            res.send("user doesn't exist");
+            res.status(404).send("user doesn't exist");
             return
         } catch (error) {
             console.log(error);
@@ -101,15 +110,10 @@ class QuoteController {
 
     async createQuote(req: Request, res: Response): Promise<void> {
         try {
-            const { idOrUsername } = req.params
-            const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-            let key = "username"
-            if(regexExp.test(idOrUsername)){
-                key = "id"
-            }
+            const where = res.locals.where;
             const user = await getRepository(Users).findOne({
                 select: ["username", "last_name", "first_name", "date", "id"],
-                where : {[key] : idOrUsername}
+                where
             });
             if(user){
                 const quote = await getRepository(Quotes).save({...req.body, user_id: user});
@@ -120,7 +124,7 @@ class QuoteController {
                 });
                 return;
             }
-            res.send('user does not exist')   
+            res.status(404).send('user does not exist')   
         } catch (error) {
             console.log(error);  
         }
@@ -133,7 +137,7 @@ class QuoteController {
                 res.send('succesfully deleted');
                 return
             }
-            res.send('does not exist');
+            res.status(404).send('does not exist');
         } catch (error) {
             console.log(error);
         }
@@ -142,8 +146,9 @@ class QuoteController {
     async updateQuote(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const result = await getRepository(Users).save({id, ...req.body})
-            res.send(result);   
+            await getRepository(Quotes).update(id, req.body)
+            const quote = await getRepository(Quotes).findOne(id)
+            res.send(quote); 
         } catch (error) {
             console.log(error);
         }

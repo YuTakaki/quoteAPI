@@ -5,22 +5,18 @@ import Users from "../entities/userModel";
 class UsersController {
     async createUser(req: Request, res: Response): Promise<void> {
         try {
+            console.log(req.body);
             const users = await getRepository(Users).save(req.body);
             res.send(users);
-        } catch (error) {
-            res.send('User Already Exist')
+        } catch (error: any) {
+            if(error.constraint === 'userLength'){
+                res.status(403).send('short username')
+            }else if(error.constraint === 'passwordLengthCheck'){
+                res.status(403).send('short password')
+            }else{
+                res.status(403).send('User already exist')
+            }
         }
-    }
-
-    checkParams(req: Request, res: Response, next: NextFunction): void {
-        const { idOrUsername } = req.params
-        const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-        let key = "username"
-        if(regexExp.test(idOrUsername)){
-            key = "id"
-        }
-        res.locals.where = {[key] : idOrUsername}
-        next();
     }
 
     async getUserInfo(req: Request, res: Response): Promise<void> {
@@ -34,7 +30,7 @@ class UsersController {
                 res.send(user);
                 return;
             }
-            res.send('user does not exist')
+            res.status(404).send('user does not exist')
         } catch (error) {
             console.log(error);
             
@@ -44,13 +40,13 @@ class UsersController {
     async deleteUser(req: Request, res: Response): Promise<void> {
         try {
             const where = res.locals.where;
-            const deleteReq = await getRepository(Users).delete(where)!;
+            const deleteReq = await getRepository(Users).delete(where);
             if(deleteReq.affected){
                 res.send('succesfully deleted');
                 return
                 
             }
-            res.send('does not exist');
+            res.status(404).send('does not exist');
 
             
         } catch (error) {
@@ -66,8 +62,8 @@ class UsersController {
                 select: ["id"],
                 where
             });
-            const rest = await getRepository(Users).save({...id, ...req.body})
-            res.send(rest);
+            const result = await getRepository(Users).save({...id, ...req.body})
+            res.send(result);
             
         } catch (error) {
             console.log(error);

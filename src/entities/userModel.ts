@@ -2,8 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn, Check, OneToMany, CreateDateCol
 import Quotes from "./quotesModel";
 
 @Entity({name : 'users'})
-@Check('LENGTH("username") > 7')
-@Check('LENGTH("password") > 7')
+@Check('userLength', 'LENGTH("username") > 7')
+@Check('passwordLengthCheck', 'LENGTH("password") > 7')
 class Users {
     @PrimaryGeneratedColumn('uuid')
     id: string
