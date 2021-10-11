@@ -23,7 +23,7 @@ class Users {
     password: string;
 
     @CreateDateColumn()
-    data: Date;
+    date: Date;
     
     @OneToMany(() => Quotes, quotes => quotes.user_id)
     quotes: Quotes[];

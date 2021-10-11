@@ -16,7 +16,7 @@ class UsersController {
         try {
             const { idOrUsername } = req.params
             const user = await getRepository(Users).findOne({
-                select: ["username", "last_name", "first_name"],
+                select: ["username", "last_name", "first_name", "date"],
                 where: [{username : idOrUsername}]
             });
             res.send(user);

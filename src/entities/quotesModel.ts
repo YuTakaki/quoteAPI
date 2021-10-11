@@ -10,7 +10,7 @@ class Quotes{
     quote: string;
 
     @CreateDateColumn()
-    data: Date;
+    date: Date;
 
     @Column({name: 'user_id'})
     user_id: string
