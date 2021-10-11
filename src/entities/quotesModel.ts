@@ -15,7 +15,7 @@ class Quotes{
     @Column({name: 'user_id'})
     user_id: string
 
-    @ManyToOne(() => Users, users => users.quotes)
+    @ManyToOne(() => Users, users => users.quotes, {onDelete: 'CASCADE'})
     @JoinColumn({name: 'user_id'})
     user: string
 }
