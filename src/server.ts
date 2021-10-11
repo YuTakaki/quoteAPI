@@ -1,9 +1,10 @@
 import express from 'express';
 import { ConnectionOptions, createConnection } from 'typeorm';
 import ormconfig from './ormconfig';
+import cors from 'cors';
 
 const app = express();
-
+app.use(cors())
 
 createConnection(
     ormconfig as ConnectionOptions
