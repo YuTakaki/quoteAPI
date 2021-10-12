@@ -10,10 +10,15 @@ createConnection(
     ormconfig as ConnectionOptions
 ).then(() => {
     console.log(`connected to database ${process.env.DB_NAME}`)
+    const path = __dirname + '/build'
+    app.use(express.static(path));
     app.use(express.json());
     app.use(express.urlencoded({extended: true}));
 
     // app.get('/api/random', )
+    app.get('/', function (req,res) {
+        res.sendFile(path + "index.html");
+      });
 
     // api/user endpoint
     app.use('/api/users', require('./routes/users'));

@@ -1,23 +1,14 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+
+import Header from './components/header';
+import Instruction from './components/instruction';
 import './styles/random.scss';
 
 const App = () => {
-  const [random, setRandom] = useState()
-  useEffect(() => {
-      (async() => {
-        const randomQuote = await axios.get('/api/quotes/random/');
-        setRandom(randomQuote.data)
-      })()
-  }, [])
+  
   return (
     <div className="App">
-      <section className='randomQuote'>
-
-      </section>
-      <section className='instruction'>
-
-      </section>
+      <Header />
+      <Instruction />
 
     </div>
   );
