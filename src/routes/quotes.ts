@@ -6,6 +6,7 @@ const route = express();
 const quoteController = new QuoteController();
 const middleware = new Middleware()
 
+route.get('/', quoteController.getAllQuote);
 route.get('/random', quoteController.getRandomQuote);
 route.get('/:id', quoteController.getQuote);
 route.delete('/:id', quoteController.deleteQuote);

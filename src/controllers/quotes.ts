@@ -91,7 +91,7 @@ class QuoteController {
             if(user){
                 const quotes = await getRepository(Quotes).find({
                     select: ["quote", "date", "id"],
-                    where : {user_id : idOrUsername}
+                    where : {user_id : user.id}
                 });
 
                 res.send({
